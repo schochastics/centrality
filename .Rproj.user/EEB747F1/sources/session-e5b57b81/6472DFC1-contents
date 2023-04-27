@@ -1,0 +1,154 @@
+g1 <- readRDS("example_1.rds")
+g2 <- readRDS("example_2.rds")
+xy <- graphlayouts::layout_with_stress(g1)
+library(ggraph)
+p1 <- ggraph(g1,layout="stress")+
+    geom_edge_link(colour=rgb(0,0,0,0.2))+
+    geom_node_point(size=7)+
+    geom_node_text(label=1:11,col="white")+
+    theme_graph(base_family = "serif")+
+    theme(legend.position = "none")+
+    labs(title="network 1")
+
+xy <- graphlayouts::layout_with_stress(g2)
+xy[7,2] <- xy[7,2] +0.5
+p2 <- ggraph(g2,layout="manual",x=xy[,1],y=xy[,2])+
+    geom_edge_link(colour=rgb(0,0,0,0.2))+
+    geom_node_point(size=7)+
+    geom_node_text(label=1:11,col="white")+
+    theme_graph(base_family = "serif")+
+    theme(legend.position = "none")+
+    labs(title="network 2")
+
+library(patchwork)
+ggsave("example.png",p1+p2,width = 12,height = 4)
+
+all_indices <- function(g){
+    res <- matrix(0,vcount(g),35)
+    res[,1] <- igraph::degree(g)
+    res[,2] <- igraph::betweenness(g)
+    res[,3] <- igraph::closeness(g)
+    res[,4] <- igraph::eigen_centrality(g)$vector
+    res[,5] <- 1/igraph::eccentricity(g)
+    res[,6] <- igraph::subgraph_centrality(g)
+    
+    A <- get.adjacency(g,sparse=F)
+    res[,7] <- sna::flowbet(A)
+    res[,8] <- sna::loadcent(A)
+    res[,9] <- sna::gilschmidt(A)
+    res[,10] <- sna::infocent(A)
+    res[,11] <- sna::stresscent(A)
+    
+    res[,12] <- 1/centiserve::averagedis(g)
+    res[,13] <- centiserve::barycenter(g)
+    res[,14] <- centiserve::closeness.currentflow(g)
+    res[,15] <- centiserve::closeness.latora(g)
+    res[,16] <- centiserve::closeness.residual(g)
+    res[,17] <- centiserve::communibet(g)
+    res[,18] <- centiserve::crossclique(g)
+    res[,19] <- centiserve::decay(g)
+    res[,20] <- centiserve::diffusion.degree(g)     
+    res[,21] <- 1/centiserve::entropy(g)
+    res[,22] <- centiserve::geokpath(g)
+    res[,23] <- centiserve::katzcent(g)             
+    res[,24] <- centiserve::laplacian(g)
+    res[,25] <- centiserve::leverage(g)             
+    res[,26] <- centiserve::lincent(g)
+    res[,27] <- centiserve::lobby(g)
+    res[,28] <- centiserve::markovcent(g)           
+    res[,29] <- centiserve::mnc(g)
+    res[,30] <- centiserve::radiality(g)            
+    res[,31] <- centiserve::semilocal(g)
+    res[,32] <- 1/centiserve::topocoefficient(g) 
+    
+    res[,33] <- CINNA::dangalchev_closeness_centrality(g)
+    res[,34] <- CINNA::harmonic_centrality(g)
+    res[,35] <- 1/CINNA::local_bridging_centrality(g)
+    apply(res,2,function(x) round(x,8))
+}
+
+res1 <- all_indices(g1)
+res2 <- all_indices(g2)
+apply(res1,2,function(x) rev(which(x==max(x)))[1]) %>% factor(levels = 1:11) %>% 
+    table() %>% unname() -> cent1
+apply(res2,2,function(x) rev(which(x==max(x)))[1]) %>% factor(levels = 1:11) %>% 
+    table() %>% unname() -> cent2
+
+cents <- tibble(net=rep(c("network 1","network 2"),each=11),node=rep(1:11,2),cent=c(cent1,cent2))
+ggplot(cents,aes(x=node,y=cent))+
+    geom_col()+
+    facet_wrap(~net)+
+    scale_x_continuous(breaks=1:11)+
+    theme_minimal()+
+    theme(panel.background = element_rect(fill=NA,colour="grey"),
+          panel.grid.major.y = element_line(colour = "grey"),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())+
+    labs(y="# most central")
+
+ggsave("most_central.png",width = 10, height = 5)
+
+g3 <- readRDS("example_3.rds")
+ggraph(g3,layout="manual",x=V(g3)$x,y=V(g3)$y)+
+    geom_edge_link0(colour=rgb(0,0,0,0.2))+
+    geom_node_point(aes(col=factor(attr)),size=1)+
+    scale_color_manual(values=c("#4A4A4A", "#CD2626"))+
+    theme_graph()+
+    theme(legend.position = "none")
+
+ggsave("example_big.png",width = 8, height = 8)
+
+cent <- data.frame(nodes=1:vcount(g3),attr=V(g3)$attr)
+cent$degree <- igraph::degree(g3)
+cent$betweenness <- igraph::betweenness(g3)
+cent$closeness <- igraph::closeness(g3)
+cent$eigen <- igraph::eigen_centrality(g3)$vector
+cent$subgraph <- igraph::subgraph_centrality(g3)
+cent$infocent <- sna::infocent(get.adjacency(g3,sparse=F))
+
+cent %>% 
+    gather(cent,value,degree:infocent) %>% 
+    group_by(cent) %>% 
+    top_n(150,value) %>% 
+    dplyr::summarise(top=sum(attr)) %>% 
+    ggplot(aes(reorder(cent,top),y=top))+
+    geom_col()+
+    theme_minimal()+
+    theme(panel.background = element_rect(fill=NA,colour="grey"),
+          panel.grid.major.y = element_line(colour = "grey"),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())+
+    labs(y="attr in top 150",x="")
+
+ggsave("attr150.png",width = 8,height = 5)
+
+cent$hyp_eve <- hyperbolic_index(g3,type = "even")
+cent$hyp_odd <- hyperbolic_index(g3,type = "odd")
+
+
+cent %>% 
+    gather(cent,value,degree:hyp_odd) %>% 
+    group_by(cent) %>% 
+    top_n(150,value) %>% 
+    dplyr::summarise(top=sum(attr)) %>% 
+    ggplot(aes(reorder(cent,top),y=top))+
+    geom_col(fill=c(rep("grey",4),"#CD2626","#CD2626","grey","grey"))+
+    theme_minimal()+
+    theme(panel.background = element_rect(fill=NA,colour="grey"),
+          panel.grid.major.y = element_line(colour = "grey"),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank())+
+    labs(y="attr in top 150",x="")
+
+ggsave("attr150_hyp.png",width = 8,height = 5)
+
+ggraph(d1,layout="kk")+
+    geom_edge_link(colour=rgb(0,0,0,0.2),end_cap = circle(2, 'mm'),
+                   arrow = grid::arrow(type="open",length=unit(0.1,"inches")))+
+    geom_node_point(size=5)+
+    geom_node_text(label=1:11,col="white")+
+    theme_graph(base_family = "serif")+
+    theme(legend.position = "none")+
+    labs(title="dominance graph (network 1)")
+
+ggsave("dominance1.png",width = 6,height = 6)
