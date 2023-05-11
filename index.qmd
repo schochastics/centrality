@@ -824,9 +824,7 @@ networks. Some benchmark results and approximation methods for larger networks c
 
 ## Summary
 
-After this part, it is time to take stock of what we have done so far. 
-To date, putting it bluntly, network centrality is nothing more than the application of indices
-to a network:
+To date, network centrality is nothing more than the application of indices:
 
 ![]("diagram_old.png")
 
