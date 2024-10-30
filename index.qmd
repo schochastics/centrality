@@ -1,8 +1,5 @@
 ---
 title: "Network Centrality in R"
-subtitle: "using indices and alternative methods"
-description: | 
-  An Introduction to Network Centrality in R using the netrankr package
 author: 
   - name: David Schoch
     orcid: 0000-0003-1689-0557
@@ -10,35 +7,23 @@ author:
     url: https://mr.schochastics.net
     affiliations:
       - name: GESIS - Leibniz Institute for the Social Sciences
-date: "2022-04-27"
-categories:
-  - network analysis
-  - R
-toc: true
-title-block-style: default
-citation:
-  url: https://github.com/schochastics/centrality
-github:
-  repo: "schochastics/centrality"
-  binder: true
-format: 
+format:
   html: default
-  pdf: 
-    default-image-extension: "png"
-format-links: [pdf]
+  ipynb: default
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  cache = TRUE,
-  out.width = "100%"
-)
-```
+## Learning Objectives
 
-## Required libraries
+By the end of this tutorial, you will be able to
+
+1. Understand the ecosystem of R packages that provide centrality measurment tools.
+2. Use centrality indices confidently in your own projects.
+
+## Target audience
+
+e.g. This tutorial is aimed at beginners in network analysis with some knowledge in R.
+
+## Setting up the computational environment
 
 To run all the code in this tutorial, you need to install and load several packages.
 ```{r install_libraries,eval=FALSE}
@@ -49,6 +34,10 @@ install.packages(c("igraph", "netrankr", "centiserve","sna","expm"))
 library(netrankr)
 library(igraph)
 ```
+
+## Social Science Usecase(s)
+
+Network centrality allows to pinpoint influential or strategically positioned individuals within a social network, offering insights into power dynamics, information flow, and social influence. For example, in studying the spread of health-related information on a platform like Twitter, researchers could use centrality metrics to identify which users are most crucial in disseminating information about a public health campaign. Degree centrality can reveal which individuals have the highest number of direct connections, suggesting they are well-positioned to rapidly broadcast messages. Betweenness centrality highlights users who act as bridges between different groups, making them pivotal for connecting otherwise separate sub-communities and potentially influencing diverse audiences. Closeness centrality identifies individuals who can quickly access or share information throughout the network, often making them efficient distributors of critical updates. By examining these metrics, one can identify not only the main influencers in a network but also potential "gatekeepers" or "brokers" who control or facilitate the flow of information, which is particularly valuable for understanding and optimizing the spread of public health messages or assessing the reach and impact of digital campaigns.
 
 
 # Part 1
@@ -257,7 +246,7 @@ signify the presence or absence of some property. Can a centrality index "explai
 of this attribute?
 
 ```{r loadexamplebig}
-#data can be found here: https://github.com/schochastics/centrality
+# data can be found here: https://github.com/schochastics/centrality
 g3 <- readRDS("example_3.rds")
 ```
 
