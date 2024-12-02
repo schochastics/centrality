@@ -1,0 +1,5 @@
+project:
+  title: Network Centrality in R
+  type: default
+  render:
+    - index.qmd

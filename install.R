@@ -1,0 +1,7 @@
+install.packages("igraph")
+install.packages("netrankr")
+install.packages("centiserve")
+install.packages("CINNA")
+install.packages("expm")
+install.packages("sna")
+install.packages("rmarkdown")
