@@ -1,0 +1,20 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Network Centrality in R
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: David
+    family-names: Schoch
+    email: david@schochastics.net
+    orcid: 'https://orcid.org/0000-0003-2952-4812'
+    affiliation: GESIS - Leibniz Institute for the Social Sciences
+identifiers:
+  - type: url
+    value: 'https://github.com/schochastics/centrality/tree/main'
+repository-code: 'https://github.com/schochastics/centrality/tree/main'
+license: CC-BY-NC-1.0
