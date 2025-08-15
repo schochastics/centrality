@@ -3,10 +3,10 @@ title: "Network Centrality in R"
 author: 
   - name: David Schoch
     orcid: 0000-0003-1689-0557
-    email: david.schoch@gesis.org
+    email: david@schochastics.net
     url: https://mr.schochastics.net
     affiliations:
-      - name: GESIS - Leibniz Institute for the Social Sciences
+      - name: Cynkra
 format:
   html: default
   ipynb: default
@@ -35,6 +35,10 @@ install.packages(c("igraph", "netrankr", "centiserve","sna","expm"))
 library(netrankr)
 library(igraph)
 ```
+
+## Duration
+
+This tutorial will typically take 4–6 hours for readers experienced with R and network analysis, and up to a full day for those new to centrality concepts.
 
 ## Social Science Usecase(s)
 
